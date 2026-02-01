@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import BlogClientWrapper from "@/app/components/BlogClientWrapper";
 async function getPosts() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
