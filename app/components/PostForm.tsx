@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Post } from "@/types/post";
 
 type PostFormProps = {
@@ -8,33 +9,48 @@ type PostFormProps = {
 };
 
 export default function PostForm({ post, onSuccess }: PostFormProps) {
-  // State initializes directly from props. 
-  // Because we use a 'key' in the parent, this resets automatically.
   const [title, setTitle] = useState(post?.title ?? "");
   const [content, setContent] = useState(post?.content ?? "");
-  const [author, setAuthor] = useState(post?.author ?? "");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     const method = post?._id ? "PATCH" : "POST";
     const url = post?._id ? `/api/posts/${post._id}` : "/api/posts";
 
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content, author }),
+      body: JSON.stringify({ title, content }),
     });
 
-    if (res.ok) {
-      onSuccess();
+    const data = await res.json();
+
+    if (!data.ok) {
+      if (res.status === 401) {
+        setError("You must be logged in to create a post");
+        router.push("/login");
+        return;
+      }
+      setError(data.message || "Failed to save post");
+      return;
     }
+
+    onSuccess();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md p-6 rounded-lg mb-6">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-md p-6 rounded-lg mb-6"
+    >
       <h2 className="text-xl font-semibold mb-4">
         {post?._id ? `Editing: ${post.title}` : "Add New Post"}
       </h2>
+
       <input
         type="text"
         placeholder="Title"
@@ -43,14 +59,7 @@ export default function PostForm({ post, onSuccess }: PostFormProps) {
         className="border border-gray-300 p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-      <input
-        type="text"
-        placeholder="Author"
-        value={author}
-        onChange={(e) => setAuthor(e.target.value)}
-        className="border border-gray-300 p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        required
-      />
+
       <textarea
         placeholder="Content"
         value={content}
@@ -58,6 +67,9 @@ export default function PostForm({ post, onSuccess }: PostFormProps) {
         className="border border-gray-300 p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
+
+      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
       <div className="flex gap-2">
         <button
           type="submit"

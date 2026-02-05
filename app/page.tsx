@@ -24,7 +24,6 @@ export default async function HomePage() {
 
   return (
     <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">My Blog</h1>
       {/* Pass the server-fetched posts to the client wrapper.
         This fixes the 'setState' error because the client 
         doesn't need an effect to load the initial list.

@@ -1,14 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PostForm from "./PostForm";
 import PostItem from "./PostItem";
 import { Post } from "@/types/post";
 
+type User = {
+  username: string;
+  role?: string;
+};
+
 export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post[] }) {
   const [editPost, setEditPost] = useState<Post | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    checkAuth();
+  }, [initialPosts]); // Re-check auth when posts refresh (after login/logout)
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.data);
+      }
+    } catch (error) {
+      console.error("Auth check failed:", error);
+    }
+  };
 
   const handleRefresh = () => {
     setEditPost(null);
@@ -33,14 +55,14 @@ export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post
 
   return (
     <>
-      {/* The 'key' ensures that when editPost changes, 
-        the form resets its internal state automatically.
-      */}
-      <PostForm
-        key={editPost?._id || "new-post"}
-        post={editPost || undefined}
-        onSuccess={handleRefresh}
-      />
+      {/* Only show PostForm when user is logged in */}
+      {user && (
+        <PostForm
+          key={editPost?._id || "new-post"}
+          post={editPost || undefined}
+          onSuccess={handleRefresh}
+        />
+      )}
 
       {initialPosts.length ? (
         <div className="space-y-4">
@@ -51,6 +73,7 @@ export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post
               onEdit={handleEdit}
               onDelete={handleDelete}
               refreshPosts={handleRefresh}
+              currentUser={user}
             />
           ))}
         </div>
