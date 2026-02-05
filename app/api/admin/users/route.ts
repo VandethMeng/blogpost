@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { requireAdmin } from "@/lib/adminAuth";
-import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
 export const dynamic = "force-dynamic";
+
+// Simple hash function (same as signup/login)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 // GET /api/admin/users - List all users
 export async function GET() {
@@ -81,7 +89,7 @@ export async function POST(request: Request) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
     // Create user
     const newUser = {

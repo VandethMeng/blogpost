@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { requireAdmin } from "@/lib/adminAuth";
-import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
+
+// Simple hash function (same as signup/login)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -90,7 +98,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
           { status: 400 },
         );
       }
-      updateFields.password = await bcrypt.hash(password, 10);
+      updateFields.password = await hashPassword(password);
     }
 
     if (role !== undefined) {
