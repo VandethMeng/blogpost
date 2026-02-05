@@ -46,21 +46,21 @@ export default function UserNav() {
   if (loading) return null;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
       {user ? (
         <>
-          <span className="text-gray-700">Welcome, {user.username}!</span>
+          <span className="text-gray-600 font-medium text-sm">Welcome, <span className="text-gray-900 font-semibold">{user.username}</span></span>
           {user.role === "admin" && (
             <a
               href="/admin"
-              className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition"
+              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors font-medium text-sm shadow-sm"
             >
               Admin
             </a>
           )}
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium text-sm shadow-sm"
           >
             Logout
           </button>
@@ -69,13 +69,13 @@ export default function UserNav() {
         <>
           <a
             href="/login"
-            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm shadow-sm"
           >
             Login
           </a>
           <a
             href="/signup"
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-medium text-sm shadow-sm"
           >
             Sign Up
           </a>
