@@ -49,7 +49,10 @@ export default function UserNav() {
     <div className="flex items-center gap-3">
       {user ? (
         <>
-          <span className="text-gray-600 font-medium text-sm">Welcome, <span className="text-gray-900 font-semibold">{user.username}</span></span>
+          <span className="text-gray-600 font-medium text-sm">
+            Welcome,{" "}
+            <span className="text-gray-900 font-semibold">{user.username}</span>
+          </span>
           {user.role === "admin" && (
             <a
               href="/admin"

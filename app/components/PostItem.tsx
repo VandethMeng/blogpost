@@ -32,7 +32,7 @@ export default function PostItem({
       <div className="flex justify-between items-start mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-lg">{post.title}</h3>
+            <h3 className="font-bold text-lg text-black">{post.title}</h3>
             <span className="text-xs text-gray-400">•</span>
             <p className="text-xs text-gray-500">
               {new Date(post.createdAt).toLocaleString()}

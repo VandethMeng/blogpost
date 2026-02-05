@@ -52,14 +52,14 @@ export default function BlogClientWrapper({
 
   const loadMorePosts = async () => {
     if (loading || !hasMore) return;
-    
+
     setLoading(true);
     try {
       const res = await fetch(`/api/posts?skip=${posts.length}&limit=5`);
       if (res.ok) {
         const data = await res.json();
         const newPosts = data.data;
-        
+
         if (newPosts.length === 0) {
           setHasMore(false);
         } else {

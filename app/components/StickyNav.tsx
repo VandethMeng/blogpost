@@ -27,7 +27,10 @@ export default function StickyNav() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-        <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+        <Link
+          href="/"
+          className="flex items-center hover:opacity-90 transition-opacity"
+        >
           <Image
             src="/angkor-logo.jpg"
             alt="My Blog Logo"
