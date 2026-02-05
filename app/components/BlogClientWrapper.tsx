@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import PostForm from "./PostForm";
 import PostItem from "./PostItem";
 import { Post } from "@/types/post";
@@ -15,10 +15,11 @@ export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post
   const [editPost, setEditPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     checkAuth();
-  }, [initialPosts]); // Re-check auth when posts refresh (after login/logout)
+  }, [initialPosts, pathname]); // Re-check auth when posts refresh or route changes
 
   const checkAuth = async () => {
     try {
@@ -26,9 +27,12 @@ export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post
       if (res.ok) {
         const data = await res.json();
         setUser(data.data);
+      } else {
+        setUser(null); // Clear user if not authenticated
       }
     } catch (error) {
       console.error("Auth check failed:", error);
+      setUser(null); // Clear user on error
     }
   };
 
