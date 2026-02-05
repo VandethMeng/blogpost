@@ -16,12 +16,16 @@ export default function BlogClientWrapper({
 }: {
   initialPosts: Post[];
 }) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [editPost, setEditPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    setPosts(initialPosts);
     checkAuth();
   }, [initialPosts, pathname]); // Re-check auth when posts refresh or route changes
 
@@ -44,6 +48,29 @@ export default function BlogClientWrapper({
     setEditPost(null);
     // This tells Next.js to re-run the server-side fetch in page.tsx
     router.refresh();
+  };
+
+  const loadMorePosts = async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/posts?skip=${posts.length}&limit=5`);
+      if (res.ok) {
+        const data = await res.json();
+        const newPosts = data.data;
+        
+        if (newPosts.length === 0) {
+          setHasMore(false);
+        } else {
+          setPosts([...posts, ...newPosts]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load more posts:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -72,19 +99,34 @@ export default function BlogClientWrapper({
         />
       )}
 
-      {initialPosts.length ? (
-        <div className="space-y-4">
-          {initialPosts.map((post: Post) => (
-            <PostItem
-              key={post._id}
-              post={post}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              refreshPosts={handleRefresh}
-              currentUser={user}
-            />
-          ))}
-        </div>
+      {posts.length ? (
+        <>
+          <div className="space-y-4">
+            {posts.map((post: Post) => (
+              <PostItem
+                key={post._id}
+                post={post}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                refreshPosts={handleRefresh}
+                currentUser={user}
+              />
+            ))}
+          </div>
+
+          {/* Load More Button */}
+          {hasMore && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={loadMorePosts}
+                disabled={loading}
+                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Loading..." : "Load More Posts"}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <p className="text-gray-500">No posts yet.</p>
       )}

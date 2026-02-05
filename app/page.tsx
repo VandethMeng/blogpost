@@ -12,6 +12,7 @@ async function getPosts() {
       .collection<Post>("posts")
       .find({})
       .sort({ createdAt: -1 })
+      .limit(5) // Only fetch 5 most recent posts initially
       .toArray();
 
     // Convert MongoDB documents to plain objects

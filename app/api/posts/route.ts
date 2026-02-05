@@ -6,14 +6,20 @@ import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic"; // <--- Add this!
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const skip = parseInt(searchParams.get("skip") || "0");
+    const limit = parseInt(searchParams.get("limit") || "5");
+
     const client = await clientPromise;
     const db = client.db("blogpostdb");
     const posts = await db
       .collection("posts")
       .find({})
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .toArray();
     return NextResponse.json({ ok: true, data: posts });
   } catch (e) {
