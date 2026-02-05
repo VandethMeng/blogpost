@@ -24,14 +24,18 @@ export default function PostItem({ post, onEdit, onDelete, refreshPosts, current
   return (
     <div className="bg-white shadow rounded p-4 mb-4">
       <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="font-bold text-lg">{post.title}</h3>
-          <p className="text-gray-600 text-sm">by {post.author}</p>
-          <p className="text-gray-800 mt-1">{post.content}</p>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-bold text-lg">{post.title}</h3>
+            <span className="text-xs text-gray-400">•</span>
+            <p className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+          </div>
+          <p className="text-gray-600 text-sm mb-2">by {post.author}</p>
+          <p className="text-gray-800">{post.content}</p>
         </div>
         {/* Show edit/delete buttons only if user is logged in and owns the post (or is admin) */}
         {currentUser && (currentUser.username === post.author || currentUser.role === "admin") && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 ml-4">
             <button
               onClick={() => onEdit(post)}
               className="text-blue-600 hover:text-blue-800 transition p-1"
@@ -72,10 +76,12 @@ export default function PostItem({ post, onEdit, onDelete, refreshPosts, current
               onDelete={refreshPosts}
             />
           ))}
-          <CommentForm
-            postId={post._id}
-            onAdd={refreshPosts} // Refresh after comment added
-          />
+          {currentUser && (
+            <CommentForm
+              postId={post._id}
+              onAdd={refreshPosts} // Refresh after comment added
+            />
+          )}
         </div>
       )}
     </div>
