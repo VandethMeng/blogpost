@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       email: user.email,
       username: user.username,
       role: user.role,
+      blocked: user.blocked || false,
     });
 
     return NextResponse.json({
@@ -60,6 +61,7 @@ export async function POST(req: Request) {
         email: user.email,
         username: user.username,
         role: user.role,
+        blocked: user.blocked || false,
       },
     });
   } catch (error) {

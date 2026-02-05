@@ -50,6 +50,14 @@ export default function UserNav() {
       {user ? (
         <>
           <span className="text-gray-700">Welcome, {user.username}!</span>
+          {user.role === "admin" && (
+            <a
+              href="/admin"
+              className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition"
+            >
+              Admin
+            </a>
+          )}
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"

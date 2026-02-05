@@ -6,7 +6,10 @@ import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   const { content } = await req.json();
 
@@ -15,12 +18,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!session) {
     return NextResponse.json(
       { ok: false, message: "Must be logged in to add a comment" },
-      { status: 401 }
+      { status: 401 },
+    );
+  }
+
+  // Check if user is blocked
+  if (session.blocked) {
+    return NextResponse.json(
+      { ok: false, message: "Your account is blocked from commenting" },
+      { status: 403 },
     );
   }
 
   if (!content) {
-    return NextResponse.json({ ok: false, message: "Missing content" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, message: "Missing content" },
+      { status: 400 },
+    );
   }
 
   const newComment: Comment = {
@@ -36,19 +50,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const db = client.db("blogpostdb");
 
     // 3. Use 'id as any' to avoid the String vs ObjectId mismatch
-    await db.collection<Post>("posts").updateOne(
-      { _id: id },
-      { $push: { comments: newComment } }
-    );
+    await db
+      .collection<Post>("posts")
+      .updateOne({ _id: id }, { $push: { comments: newComment } });
 
     return NextResponse.json({ ok: true, data: newComment });
   } catch (error) {
     console.error("Comment Error:", error);
-    return NextResponse.json({ ok: false, message: "Database error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, message: "Database error" },
+      { status: 500 },
+    );
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   const { commentId } = await req.json();
 
@@ -57,12 +76,15 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (!session) {
     return NextResponse.json(
       { ok: false, message: "Must be logged in to delete a comment" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
   if (!commentId) {
-    return NextResponse.json({ ok: false, message: "Missing commentId" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, message: "Missing commentId" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -71,20 +93,20 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     // Check if comment exists and user owns it
     const post = await db.collection<Post>("posts").findOne({ _id: id });
-    
+
     if (!post) {
       return NextResponse.json(
         { ok: false, message: "Post not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    const comment = post.comments?.find(c => c.id === commentId);
-    
+    const comment = post.comments?.find((c) => c.id === commentId);
+
     if (!comment) {
       return NextResponse.json(
         { ok: false, message: "Comment not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -92,18 +114,20 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (comment.author !== session.username && session.role !== "admin") {
       return NextResponse.json(
         { ok: false, message: "Not authorized to delete this comment" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    await db.collection<Post>("posts").updateOne(
-      { _id: id },
-      { $pull: { comments: { id: commentId } } }
-    );
+    await db
+      .collection<Post>("posts")
+      .updateOne({ _id: id }, { $pull: { comments: { id: commentId } } });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Delete Comment Error:", error);
-    return NextResponse.json({ ok: false, message: "Failed to delete comment" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, message: "Failed to delete comment" },
+      { status: 500 },
+    );
   }
 }

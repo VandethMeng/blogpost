@@ -62,8 +62,10 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     const db = client.db("blogpostdb");
 
     // Check if post exists and user owns it
-    const existingPost = await db.collection<Post>("posts").findOne({ _id: id });
-    
+    const existingPost = await db
+      .collection<Post>("posts")
+      .findOne({ _id: id });
+
     if (!existingPost) {
       return NextResponse.json(
         { ok: false, message: "Post not found" },
@@ -80,17 +82,15 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     }
 
     // 3. Update the document
-    await db
-      .collection<Post>("posts")
-      .updateOne(
-        { _id: id },
-        {
-          $set: {
-            title: body.title,
-            content: body.content,
-          },
+    await db.collection<Post>("posts").updateOne(
+      { _id: id },
+      {
+        $set: {
+          title: body.title,
+          content: body.content,
         },
-      );
+      },
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -121,8 +121,10 @@ export async function DELETE(req: Request, { params }: RouteContext) {
     const db = client.db("blogpostdb");
 
     // Check if post exists and user owns it
-    const existingPost = await db.collection<Post>("posts").findOne({ _id: id });
-    
+    const existingPost = await db
+      .collection<Post>("posts")
+      .findOne({ _id: id });
+
     if (!existingPost) {
       return NextResponse.json(
         { ok: false, message: "Post not found" },

@@ -5,6 +5,7 @@ export type User = {
   password: string; // hashed
   createdAt: string;
   role: "user" | "admin";
+  blocked?: boolean;
 };
 
 export type Session = {
@@ -12,4 +13,5 @@ export type Session = {
   email: string;
   username: string;
   role: "user" | "admin";
+  blocked?: boolean;
 };

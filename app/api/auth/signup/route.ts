@@ -58,6 +58,7 @@ export async function POST(req: Request) {
       password: hashedPassword,
       createdAt: new Date().toISOString(),
       role: "user",
+      blocked: false,
     };
 
     await db.collection<typeof newUser>("users").insertOne(newUser);
@@ -68,6 +69,7 @@ export async function POST(req: Request) {
       email: newUser.email,
       username: newUser.username,
       role: newUser.role,
+      blocked: newUser.blocked,
     });
 
     return NextResponse.json({
@@ -77,6 +79,7 @@ export async function POST(req: Request) {
         email: newUser.email,
         username: newUser.username,
         role: newUser.role,
+        blocked: newUser.blocked,
       },
     });
   } catch (error) {

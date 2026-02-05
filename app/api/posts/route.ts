@@ -33,6 +33,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check if user is blocked
+    if (session.blocked) {
+      return NextResponse.json(
+        { ok: false, message: "Your account is blocked from posting" },
+        { status: 403 },
+      );
+    }
+
     const { title, content } = await req.json();
 
     if (!title || !content) {

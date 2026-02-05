@@ -11,7 +11,11 @@ type User = {
   role?: string;
 };
 
-export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post[] }) {
+export default function BlogClientWrapper({
+  initialPosts,
+}: {
+  initialPosts: Post[];
+}) {
   const [editPost, setEditPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
@@ -39,7 +43,7 @@ export default function BlogClientWrapper({ initialPosts }: { initialPosts: Post
   const handleRefresh = () => {
     setEditPost(null);
     // This tells Next.js to re-run the server-side fetch in page.tsx
-    router.refresh(); 
+    router.refresh();
   };
 
   const handleDelete = async (id: string) => {

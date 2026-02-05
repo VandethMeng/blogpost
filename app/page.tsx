@@ -13,7 +13,7 @@ async function getPosts() {
       .find({})
       .sort({ createdAt: -1 })
       .toArray();
-    
+
     // Convert MongoDB documents to plain objects
     return JSON.parse(JSON.stringify(posts));
   } catch (error) {

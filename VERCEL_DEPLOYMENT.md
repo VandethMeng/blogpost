@@ -5,6 +5,7 @@
 Configure these in Vercel Dashboard → Project Settings → Environment Variables:
 
 ### 1. MONGODB_URI (Required)
+
 Your MongoDB connection string. Get this from MongoDB Atlas.
 
 ```
@@ -14,6 +15,7 @@ mongodb+srv://username:password@cluster.mongodb.net/blogpostdb?retryWrites=true&
 **Important**: Make sure the database name is `blogpostdb`
 
 ### 2. JWT_SECRET (Required)
+
 A strong random string for JWT token signing (minimum 32 characters).
 
 ```
@@ -25,7 +27,6 @@ your-super-secret-jwt-key-change-this-in-production-123456789
 ## Deployment Steps
 
 1. **Push your code to GitHub** (already done)
-   
 2. **Go to Vercel Dashboard**: https://vercel.com/dashboard
 
 3. **Import your GitHub repository**:
@@ -53,20 +54,24 @@ your-super-secret-jwt-key-change-this-in-production-123456789
 ## Troubleshooting
 
 ### Posts not showing:
+
 - ✅ **Fixed**: Now using direct database queries instead of HTTP fetch
 - Check Vercel logs for errors: Project → Deployments → [Click your deployment] → Function Logs
 
 ### Environment variables not working:
+
 - Go to Project Settings → Environment Variables
 - Make sure variables are added to "Production"
 - Redeploy after adding variables
 
 ### MongoDB connection errors:
+
 - Verify your MongoDB Atlas IP whitelist includes `0.0.0.0/0` (allow all) or Vercel's IPs
 - Check your connection string format
 - Test connection locally first
 
 ### JWT/Auth errors:
+
 - Ensure `JWT_SECRET` is set and is at least 32 characters long
 - Check browser cookies are enabled
 
