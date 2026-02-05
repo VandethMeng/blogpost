@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    await db.collection("users").insertOne(newUser);
+    await db.collection("users").insertOne(newUser as any); // eslint-disable-line
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = newUser;
