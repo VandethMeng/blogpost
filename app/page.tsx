@@ -1,18 +1,21 @@
 export const dynamic = "force-dynamic";
 import BlogClientWrapper from "@/app/components/BlogClientWrapper";
+import clientPromise from "@/lib/mongodb";
+import { Post } from "@/types/post";
+
 async function getPosts() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
   try {
-    // Adding a timestamp or 'no-store' forces Next.js to skip the cache
-    const res = await fetch(`${baseUrl}/api/posts?t=${Date.now()}`, {
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
-
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.ok ? data.data : [];
+    // Direct database query instead of HTTP fetch (better for Vercel)
+    const client = await clientPromise;
+    const db = client.db("blogpostdb");
+    const posts = await db
+      .collection<Post>("posts")
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+    
+    // Convert MongoDB documents to plain objects
+    return JSON.parse(JSON.stringify(posts));
   } catch (error) {
     console.error("Fetch error:", error);
     return [];

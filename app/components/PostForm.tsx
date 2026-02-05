@@ -39,6 +39,12 @@ export default function PostForm({ post, onSuccess }: PostFormProps) {
       return;
     }
 
+    // Clear form after successful post creation (not for edits)
+    if (!post?._id) {
+      setTitle("");
+      setContent("");
+    }
+
     onSuccess();
   };
 
