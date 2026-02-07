@@ -200,7 +200,7 @@ DELETE /api/admin/comments/[id]      - Delete any comment (admin only)
 
 ## 7. Tech Stack
 
-- **Frontend:** Next.js 15 (App Router) + TypeScript (strict mode)
+- **Frontend:** Next.js 16 (App Router) + TypeScript (strict mode)
 - **Styling:** Tailwind CSS with utility classes
   - JWT tokens in httpOnly cookies
   - Password hashing with bcrypt

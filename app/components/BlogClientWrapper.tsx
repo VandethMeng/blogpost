@@ -55,7 +55,7 @@ export default function BlogClientWrapper({
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/posts?skip=${posts.length}&limit=5`);
+      const res = await fetch(`/api/posts?skip=${posts.length}&limit=10`);
       if (res.ok) {
         const data = await res.json();
         const newPosts = data.data;
@@ -122,7 +122,7 @@ export default function BlogClientWrapper({
                 disabled={loading}
                 className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Loading..." : "Load More Posts"}
+                {loading ? "Loading..." : "See More"}
               </button>
             </div>
           )}
